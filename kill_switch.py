@@ -2,6 +2,8 @@ from gpiozero import LED, Button, DigitalInputDevice
 from signal import pause
 import signal
 import sys
+from kubernetes import client, config
+from pprint import pprint
 
 import curses
 from matrix_effect import matrix_effect
@@ -61,5 +63,12 @@ def main():
 if __name__ == "__main__":
     # Set up a signal handler to handle interrupts
     signal.signal(signal.SIGINT, signal_handler)
-    
-    main()
+
+    # Configs can be set in Configuration class directly or using helper utility
+    config.load_kube_config()
+
+    v1 = client.AppsV1Api()
+    api_response = v1.read_namespaced_deployment('job-service', 'default', pretty=True)
+    pprint(api_response)
+        
+    # main()

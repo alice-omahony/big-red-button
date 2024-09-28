@@ -3,6 +3,7 @@ import random
 import signal
 import time
 import sys
+from kaboom import all as kabooms
 
 # Init allowed characters
 ALNUMS = [code for code in range(0x30, 0x5E)]
@@ -34,15 +35,18 @@ def matrix_effect(stdscr):
     # Hide cursor
     curses.curs_set(0)
 
-    # Init colours
+    # # Init colours
     L_GREEN = 1
     D_GREEN = 2
+    RED = 3
 
     curses.start_color()
     curses.init_color(L_GREEN, 0, 1000, 0)
     curses.init_color(D_GREEN, 0, 500, 0)
+    curses.init_color(RED, 750, 0, 100)
     curses.init_pair(L_GREEN, L_GREEN, curses.COLOR_BLACK)
     curses.init_pair(D_GREEN, D_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(RED, RED, curses.COLOR_BLACK)
 
     # Get max screen coords
     max_y, max_x = stdscr.getmaxyx()
@@ -71,9 +75,18 @@ def matrix_effect(stdscr):
       stdscr.refresh()
       time.sleep(0.05)
 
-      if current_time - start_time > 10:
+      if current_time - start_time > 1:
         break
       
+    # print the animated kaboom string
+    stdscr.clear()
+    for kaboom_str in kabooms:
+        stdscr.addstr(0,0,kaboom_str,curses.color_pair(RED))
+        stdscr.refresh()
+        time.sleep(0.5)
+
+    time.sleep(2)
+
     stdscr.clear()
     curses.endwin()
 
