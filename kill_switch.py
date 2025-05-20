@@ -20,8 +20,8 @@ def signal_handler(sig, frame):
 def main():
     # arm_btn = Button(4)
     arm_switch = DigitalInputDevice(4)
-    trigger_btn = Button(6)
-    green_led = LED(18)
+    trigger_btn = Button(18)
+    green_led = LED(6)
     red_led = LED(12)
 
     def kill_switch():
@@ -30,7 +30,6 @@ def main():
         if not TRIGGERED:
             TRIGGERED = True
             curses.wrapper(matrix_effect)
-            print("kaBOOM")
 
 
     def dummy_switch():
@@ -51,6 +50,7 @@ def main():
 
 
     # setup inital state: Green 1, Red 0
+    
     green_led.toggle()
     trigger_btn.when_released = dummy_switch
     arm_switch.when_activated = toggle_armed_state
@@ -66,9 +66,15 @@ if __name__ == "__main__":
 
     # Configs can be set in Configuration class directly or using helper utility
     config.load_kube_config()
+    ctx = config.list_kube_config_contexts()
+    pprint(ctx)
 
-    v1 = client.AppsV1Api()
-    api_response = v1.read_namespaced_deployment('job-service', 'default', pretty=True)
+
+    v1 = client.CoreV1Api()
+    # api_response = v1.read_namespaced_deployment('job-service', 'default', pretty=True)
+    api_response = v1.delete_namespaced_service(name='job-service', namespace='default', pretty=True, dry_run='All', propagation_policy='Foreground')
+
+    main()
+    
     pprint(api_response)
-        
-    # main()
+

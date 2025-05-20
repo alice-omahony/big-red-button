@@ -3,7 +3,7 @@ import random
 import signal
 import time
 import sys
-from kaboom import all as kabooms
+from bye import all as frames
 
 # Init allowed characters
 ALNUMS = [code for code in range(0x30, 0x5E)]
@@ -75,13 +75,20 @@ def matrix_effect(stdscr):
       stdscr.refresh()
       time.sleep(0.05)
 
-      if current_time - start_time > 1:
+      if current_time - start_time > 5:
         break
       
-    # print the animated kaboom string
+    # print the animated bye string
     stdscr.clear()
-    for kaboom_str in kabooms:
-        stdscr.addstr(0,0,kaboom_str,curses.color_pair(RED))
+    for f in frames:
+        f_lines = f.splitlines()
+        y_start = (max_y // 2) - (len(f_lines) // 2)
+        
+        for idx, line in enumerate(f_lines):
+            x_start = (max_x // 2) - (len(line) // 2)
+            stdscr.addstr(y_start + idx, x_start, line, curses.color_pair(RED))
+        
+        # Refresh the screen to display everything
         stdscr.refresh()
         time.sleep(0.5)
 
